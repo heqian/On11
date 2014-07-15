@@ -94,17 +94,17 @@ bool analyzeAcceleration(uint32_t* currentType, Counter* counter, LowPassFilter*
 		if (*currentType > 1) {	// Walking or Jogging
 			int direction = 0;
 
-			double sensitivity = 0.0;
+			double ratio = 0.0;
 			if (*currentType == 2) {	// Only filer steps for walking, but NOT for jogging!
-				sensitivity = (double) sensitivity / 100.0;
+				ratio = (double) sensitivity / 100.0;
 			};
 
 			for (uint32_t i = 1; i < SAMPLE_SIZE; i++) {
-				if (mAcceleration[i].x > feature.meanV + (maxV - feature.meanV) * sensitivity) {
+				if (mAcceleration[i].x > feature.meanV + (maxV - feature.meanV) * ratio) {
 					if (direction == -1)
 						steps++;
 					direction = 1;
-				} else if (mAcceleration[i].x < feature.meanV + (minV - feature.meanV) * sensitivity) {
+				} else if (mAcceleration[i].x < feature.meanV + (minV - feature.meanV) * ratio) {
 					if (direction == 1)
 						steps++;
 					direction = -1;
