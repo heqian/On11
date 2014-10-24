@@ -12,12 +12,12 @@ bool analyzeAcceleration(uint32_t* currentType, Counter* counter, LowPassFilter*
 	}
 
 	if (mDataSize < SAMPLE_SIZE) {	// Not enough, so add data to collection first
-		for (uint32_t i = 0; i < size; i++) {
+		for (uint32_t i = 0; i < size && mDataSize < SAMPLE_SIZE; i++) {
 			mAcceleration[mDataSize + i].x = acceleration[i].x;
 			mAcceleration[mDataSize + i].y = acceleration[i].y;
 			mAcceleration[mDataSize + i].z = acceleration[i].z;
+			mDataSize++;
 		}
-		mDataSize += size;
 		return false;
 	} else {	// Enough for classification
 		int16_t maxV = -32767;	// Actually, it should be -32768. I just hate asymmetry...
