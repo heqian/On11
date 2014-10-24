@@ -1,5 +1,5 @@
 #ifndef RECOGNIZER_H
-
+#define RECOGNIZER_H
 #include <pebble.h>
 #include "lowpassfilter.h"
 #include "classifier.h"
