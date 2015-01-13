@@ -1,7 +1,5 @@
 #include "classifier.h"
 
-// It's not magic. It's not Math. It's a model trained with real data -- data collected from a poor experimental subject: me...
-
 uint32_t classify(Feature feature) {
 	uint32_t type = 0;
 	double probability = 0.0;

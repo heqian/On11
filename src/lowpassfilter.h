@@ -1,5 +1,6 @@
 #ifndef LOWPASSFILTER_H
 #define LOWPASSFILTER_H
+
 #include <pebble.h>
 
 typedef struct {

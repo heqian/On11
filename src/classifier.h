@@ -1,5 +1,6 @@
 #ifndef CLASSIFIER_H
 #define CLASSIFIER_H
+
 #include <pebble.h>
 
 typedef struct {

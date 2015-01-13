@@ -5,10 +5,11 @@ static uint32_t mDataSize = 0;
 static AccelData mAcceleration[SAMPLE_SIZE];
 
 // Handle accleration data
-bool analyzeAcceleration(uint32_t* currentType, Counter* counter, LowPassFilter* filter, bool isDriving, int32_t sensitivity, AccelData* acceleration, uint32_t size) {
+uint32_t analyzeAcceleration(uint32_t* currentType, Counter* counter, LowPassFilter* filter, bool isDriving, int32_t sensitivity, AccelData* acceleration, uint32_t size) {
 	// I don't know if Pebble's API will fail to return 0 sample. Just in case.
 	if (size == 0) {
-		return false;
+		APP_LOG(APP_LOG_LEVEL_INFO, "No acceleration sample!!");
+		return 1;
 	} else {
 		// Add samples
 		uint32_t i = 0;
@@ -20,8 +21,10 @@ bool analyzeAcceleration(uint32_t* currentType, Counter* counter, LowPassFilter*
 		mDataSize += i;
 	}
 
+	// Check if enough
 	if (mDataSize < SAMPLE_SIZE) {	// Not enough, so add data to collection first
-		return false;
+		APP_LOG(APP_LOG_LEVEL_INFO, "Sample collector: %d/%d", (int) mDataSize, SAMPLE_SIZE);
+		return 2;
 	} else {	// Enough for classification
 		int16_t maxV = -32767;	// Actually, it should be -32768. I just hate asymmetry...
 		int16_t minV = 32767;
@@ -66,6 +69,8 @@ bool analyzeAcceleration(uint32_t* currentType, Counter* counter, LowPassFilter*
 		// Classification
 		*currentType = classify(feature);
 
+		APP_LOG(APP_LOG_LEVEL_INFO, "%d %d %d %d: %d", (int) feature.meanV, (int) feature.meanH, (int) feature.deviationV, (int) feature.deviationH, (int) *currentType);
+
 		// Update
 		if (*currentType > 1 && isDriving) {
 			// If the user is driving, then, activity type is "sitting"
@@ -100,7 +105,7 @@ bool analyzeAcceleration(uint32_t* currentType, Counter* counter, LowPassFilter*
 			double ratio = 0.0;
 			if (*currentType == 2) {	// Only filer steps for walking, but NOT for jogging!
 				ratio = (double) sensitivity / 100.0;
-			};
+			}
 
 			for (uint32_t i = 1; i < SAMPLE_SIZE; i++) {
 				if (mAcceleration[i].x > feature.meanV + (maxV - feature.meanV) * ratio) {
@@ -114,10 +119,20 @@ bool analyzeAcceleration(uint32_t* currentType, Counter* counter, LowPassFilter*
 				}
 			}
 			steps /= 2;
+
+			if (*currentType == 2) {
+				if (steps > elapsedTime * MAX_WALKING_SPEED) {	// Driving may be recognized as walking. Fix it.
+					*currentType = 1;
+					counter->sitTime += elapsedTime;
+					counter->walkTime -= elapsedTime;
+					steps = 0;
+				}
+			}
+
 			counter->steps += steps;
 		}
 
 		mDataSize = 0;
-		return true;
+		return 0;
 	}
 }

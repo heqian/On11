@@ -21,7 +21,8 @@ void processAccelerometerData(AccelData* acceleration, uint32_t size) {
 	Counter counter = mCounter;
 
 	// Throw the variables into below function, it will update it for you.
-	if (analyzeAcceleration(&mCurrentType, &mCounter, &mFilter, mIsDriving, mPedometerSensitivity, acceleration, size)) {
+	// Return: 0 means no error; 1 means no acceleration sample (Pebble acceleration API was not very reliable); 2 means # of samples is not enough and it will cache and wait for more data.
+	if (analyzeAcceleration(&mCurrentType, &mCounter, &mFilter, mIsDriving, mPedometerSensitivity, acceleration, size) != 0) {
 		// Log data for companion app
 		uint32_t steps = mCounter.steps - counter.steps;
 
