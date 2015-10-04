@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0" name="viewport">
+  <title>On11 Time Configuration</title>
+  <link rel="stylesheet" href="css/slate.css">
+</head>
+<body onload="load()">
+  <form id="main-form">
+      
+    <div class="item-container">
+      <div class="item-container-header">Pedometer Sensitivity</div>
+      <div class="item-container-content">
+        <label class="item tab-buttons">
+          <a id="less-sensitive" name="pedometer-sensitivity" class="tab-button">Less</a>
+          <a id="normal" name="pedometer-sensitivity" class="tab-button">Normal</a>
+          <a id="more-sensitive" name="pedometer-sensitivity" class="tab-button">More</a>
+        </label>
+      </div>
+    </div>
+    
+    <div class="item-container">
+      <div class="item-container-header">Step Goal (STEPS)</div>
+      <div class="item-container-content">
+        <label class="item">
+          <input id="step-goal-slider" name="step-goal" type="range" class="item-slider" min="0" max="20000" step="1000">
+          <div class="item-input-wrapper item-slider-text">
+            <input id="step-goal" name="step-goal" type="number" class="item-input" pattern="\d*" min="0" max="20000" step="1000">
+          </div>
+        </label>
+      </div>
+    </div>
+    
+    <div class="item-container">
+      <div class="item-container-header">Active Time Goal (MINUTES)</div>
+      <div class="item-container-content">
+        <label class="item">
+          <input id="active-time-goal-slider" name="active-time-goal" type="range" class="item-slider" min="0" max="360" step="10">
+          <div class="item-input-wrapper item-slider-text">
+            <input id="active-time-goal" name="active-time-goal" type="number" class="item-input" pattern="\d*" min="0" max="360" step="10">
+          </div>
+        </label>
+      </div>
+    </div>
+    
+    <div class="item-container">
+      <div class="item-container-header">Reset Time</div>
+      <div class="item-container-content">
+        <label class="item">
+          Everyday @
+          <input id="reset-time" name="reset-time" type="time" class="non-appearance" value="00:00">
+        </label>
+      </div>
+    </div>
+    
+    <div class="item-container">
+      <div class="item-container-content">
+        <div class="item">
+          Version: 1.0
+        </div>
+      </div>
+    </div>
+    
+    <div class="item-container">
+      <div class="button-container">
+        <input type="button" class="item-button" onclick="save()" value="SAVE">
+      </div>
+    </div>
+  </form>
+  
+  <script>
+  function padZero(num) {
+    var str = "00" + num;
+    return str.slice(-2);
+  }
+
+  function load() {
+    var resetTime = parseInt(window.localStorage.getItem("resetTime"));
+    var pedometerSensitivity = parseInt(window.localStorage.getItem("pedometerSensitivity"));
+    var stepGoal = parseInt(window.localStorage.getItem("stepGoal"));
+    var activeTimeGoal = parseInt(window.localStorage.getItem("activeTimeGoal"));
+
+    if (! isNaN(resetTime)) {
+        document.getElementById("reset-time").value = padZero((resetTime - resetTime % 60) / 60) + ":" + padZero(resetTime % 60);
+    } else {
+        document.getElementById("reset-time").value = "00:00";
+    }
+    
+    if (isNaN(pedometerSensitivity)) {
+      pedometerSensitivity = 15;
+    }
+    setPedometerSensitivity(pedometerSensitivity);
+    
+    if (! isNaN(stepGoal)) {
+      document.getElementById("step-goal").value = stepGoal;
+	  document.getElementById("step-goal-slider").value = stepGoal;
+    } else {
+      document.getElementById("step-goal").value = 10000;
+	  document.getElementById("step-goal-slider").value = 10000;
+    }
+    
+    if (! isNaN(activeTimeGoal)) {
+      document.getElementById("active-time-goal").value = activeTimeGoal;
+	  document.getElementById("active-time-goal-slider").value = activeTimeGoal;
+    } else {
+      document.getElementById("active-time-goal").value = 180;
+	  document.getElementById("active-time-goal-slider").value = 180;
+    }
+  }
+  
+  function setPedometerSensitivity(pedometerSensitivity) {
+    var sensitivity;
+    switch (pedometerSensitivity) {
+      case 30:
+        sensitivity = document.getElementById("less-sensitive");
+        break;
+      case 0:
+        sensitivity = document.getElementById("more-sensitive");
+        break;
+      case 15:
+      default:
+        sensitivity = document.getElementById("normal");
+    }
+    sensitivity.className += " active";
+  }
+  
+  function getPedometerSensitivity() {
+    var sensitivity = document.getElementById("less-sensitive");
+    if (sensitivity.className.indexOf("active") > -1) {
+      return 30;
+    }
+    
+    sensitivity = document.getElementById("normal");
+    if (sensitivity.className.indexOf("active") > -1) {
+      return 15;
+    }
+    
+    sensitivity = document.getElementById("more-sensitive");
+    if (sensitivity.className.indexOf("active") > -1) {
+      return 0;
+    }
+    
+    return 15;
+  }
+
+  function saveOptions() {
+    var resetTime = 0;
+    var time = document.getElementById("reset-time").value.split(":");
+    resetTime = parseInt(time[0], 0) * 60 + parseInt(time[1]);
+    var pedometerSensitivity = getPedometerSensitivity();
+    var stepGoal = parseInt(document.getElementById("step-goal").value);
+    if (stepGoal <= 0) stepGoal = 10000;
+    var activeTimeGoal = parseInt(document.getElementById("active-time-goal").value);
+    if (activeTimeGoal <= 0) activeTimeGoal = 180;
+
+    window.localStorage.setItem("resetTime", resetTime);
+    window.localStorage.setItem("pedometerSensitivity", pedometerSensitivity);
+    window.localStorage.setItem("stepGoal", stepGoal);
+    window.localStorage.setItem("activeTimeGoal", activeTimeGoal);
+
+    var options = {
+        "resetTime": resetTime,
+        "pedometerSensitivity": pedometerSensitivity,
+        "stepGoal": stepGoal,
+        "activeTimeGoal": activeTimeGoal
+    }
+
+    console.log(JSON.stringify(options));
+
+    return options;
+  }
+  
+  function save() {
+    console.log("Save");
+    var url = "pebblejs://close#" + encodeURIComponent(JSON.stringify(saveOptions()));
+    window.location.href = url;
+  }
+  </script>
+
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-34716982-4', 'auto');
+  ga('require', 'displayfeatures');
+  ga('send', 'pageview');
+  </script>
+  
+  <script type="text/javascript" src="js/slate.js"></script>
+</body>
+</html>

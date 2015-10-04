@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="shortcut icon" href="img/favicon.png">
+
+    <title>On11 Watchface Configuration</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="css/bootstrap.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="css/jumbotron-narrow.css" rel="stylesheet">
+
+    <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-34716982-4', 'auto');
+    ga('require', 'displayfeatures');
+    ga('send', 'pageview');
+
+    </script>
+  </head>
+
+  <body onload="load()">
+	  <div class="header">
+        <h3 class="text-muted">On11 Configuration</h3>
+      </div>
+
+      <div class="jumbotron">
+		  <img src="img/favicon.png" alt="Banner" class="img-circle img-responsive center-block">
+      </div>
+
+      <div class="container">
+		  <div class="form-horizontal">
+			  <div class="form-group col-xs-12">
+				  <label for="color-theme">Color Theme (for Pebble & Pebble Steel)</label>
+				  <select class="form-control non-appearance" id="color-theme">
+					  <option value="normal">Normal</option>
+					  <option value="reverse">Reverse</option>
+				  </select>
+			  </div>
+
+			  <div class="form-group col-xs-12">
+				  <label for="reset-time">Reset Time</label>
+				  <input class="form-control non-appearance" type="time" id="reset-time">
+			  </div>
+
+			  <div class="form-group col-xs-12">
+				  <label for="speed-threshold">Minimal Driving Speed</label>
+				  <select class="form-control non-appearance" id="speed-threshold">
+					  <option value="0">Disable Driving Detection</option>
+					  <option value="278">10 km/h</option>
+					  <option value="556">20 km/h</option>
+					  <option value="833">30 km/h</option>
+					  <option value="447">10 mi/h</option>
+					  <option value="894">20 mi/h</option>
+					  <option value="1341">30 mi/h</option>
+				  </select>
+			  </div>
+
+              <div class="form-group col-xs-12">
+                  <label for="battery-threshold">In-app Low Battery Warning</label>
+                  <select class="form-control non-appearance" id="battery-threshold">
+                      <option value="0">Disable</option>
+                      <option value="10">10 %</option>
+                      <option value="20">20 %</option>
+                      <option value="30">30 %</option>
+                      <option value="40">40 %</option>
+                      <option value="50">50 %</option>
+                  </select>
+              </div>
+
+              <div class="form-group col-xs-12">
+                  <label for="pedometer-sensitivity">Sensitivity:</label>
+                  <label id="pedometer-sensitivity-name" for="pedometer-sensitivity"></label>
+                  <input class="form-control" id="pedometer-sensitivity" type="range" min="0" max="50" step="5" list="sensitivity-settings" onchange="rangeUpdated(this.value);"/>
+                  <datalist id="sensitivity-settings">
+                      <option>0</option>
+                      <option>5</option>
+                      <option>10</option>
+                      <option>15</option>
+                      <option>20</option>
+                      <option>25</option>
+                      <option>30</option>
+                      <option>35</option>
+                      <option>40</option>
+                      <option>45</option>
+                      <option>50</option>
+                  </datalist>
+              </div>
+
+			  <div class="form-group col-xs-12">
+				  <div class="col-xs-6 text-center">
+					  <button class="btn btn-primary" onclick="cancel()" class="btn btn-default">Cancel</button>
+			      </div>
+
+				  <div class="col-xs-6 text-center">
+					  <button class="btn btn-success" onclick="update()" class="btn btn-default">Update</button>
+			      </div>
+			  </div>
+		  </div>
+	  </div>
+
+
+	<div class="footer">
+	  	<p>
+			Copyright &copy; 2015 Qian He
+		</p>
+	</div>
+
+
+    <script>
+	function padZero(num) {
+		var str = "00" + num;
+		return str.slice(-2);
+	}
+
+    function rangeUpdated(value) {
+        var name = document.getElementById("pedometer-sensitivity-name");
+        if (value < 10) {
+            name.innerHTML = "Very Sensitive (" + value + ")";
+        } else if (value < 20) {
+            name.innerHTML = "Sensitive (" + value + ")";
+        } else if (value < 35) {
+            name.innerHTML = "Normal (" + value + ")";
+        } else if (value < 45) {
+            name.innerHTML = "Insensitive (" + value + ")";
+        } else if (value < 55) {
+            name.innerHTML = "Very Insensitive (" + value + ")";
+        }
+    }
+
+	function load() {
+		var colorTheme = parseInt(window.localStorage.getItem("colorTheme"));
+		var resetTime = parseInt(window.localStorage.getItem("resetTime"));
+		var speedThreshold = parseInt(window.localStorage.getItem("speedThreshold"));
+        var batteryThreshold = parseInt(window.localStorage.getItem("batteryThreshold"));
+        var pedometerSensitivity = parseInt(window.localStorage.getItem("pedometerSensitivity"));
+
+		if (! isNaN(colorTheme)) {
+			if (colorTheme == 1) {
+				document.getElementById("color-theme").value = "normal";
+			} else {
+				document.getElementById("color-theme").value = "reverse";
+			}
+		}
+
+		if (! isNaN(resetTime)) {
+			document.getElementById("reset-time").value = padZero((resetTime - resetTime % 60) / 60) + ":" + padZero(resetTime % 60);
+		} else {
+            document.getElementById("reset-time").value = "00:00";
+        }
+
+		if (! isNaN(speedThreshold)) {
+			document.getElementById("speed-threshold").value = speedThreshold;
+		} else {
+            document.getElementById("speed-threshold").value = 0;
+        }
+
+        if (! isNaN(batteryThreshold)) {
+            document.getElementById("battery-threshold").value = batteryThreshold;
+        } else {
+            document.getElementById("battery-threshold").value = 20;
+        }
+
+        if (! isNaN(pedometerSensitivity)) {
+            document.getElementById("pedometer-sensitivity").value = pedometerSensitivity;
+        } else {
+            document.getElementById("pedometer-sensitivity").value = 25;
+        }
+        // Update sensitivity label
+        rangeUpdated(document.getElementById("pedometer-sensitivity").value);
+	}
+
+    function saveOptions() {
+		var colorTheme = 0;
+		if (document.getElementById("color-theme").value == "normal") {
+			colorTheme = 1;
+		}
+
+		var resetTime = 0;
+		var time = document.getElementById("reset-time").value.split(":");
+		resetTime = parseInt(time[0], 0) * 60 + parseInt(time[1]);
+
+		var speedThreshold = parseInt(document.getElementById("speed-threshold").value);
+        var batteryThreshold = parseInt(document.getElementById("battery-threshold").value);
+        var pedometerSensitivity = parseInt(document.getElementById("pedometer-sensitivity").value);
+
+		window.localStorage.setItem("colorTheme", colorTheme);
+		window.localStorage.setItem("resetTime", resetTime);
+		window.localStorage.setItem("speedThreshold", speedThreshold);
+        window.localStorage.setItem("batteryThreshold", batteryThreshold);
+        window.localStorage.setItem("pedometerSensitivity", pedometerSensitivity);
+
+		var options = {
+        	"colorTheme": colorTheme,
+			"resetTime": resetTime,
+			"speedThreshold": speedThreshold,
+            "batteryThreshold": batteryThreshold,
+            "pedometerSensitivity": pedometerSensitivity
+		}
+
+		console.log(JSON.stringify(options));
+
+		return options;
+    }
+
+	function cancel() {
+		console.log("Cancel");
+		window.location.href = "pebblejs://close";
+	}
+
+	function update() {
+		console.log("Update");
+		var url = "pebblejs://close#" + encodeURIComponent(JSON.stringify(saveOptions()));
+		console.log(url);
+		window.location.href = url;
+	}
+    </script>
+
+	</body>
+</html>
