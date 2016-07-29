@@ -1,0 +1,29 @@
+{
+  "uuid": "",
+  "shortName": "On11",
+  "longName": "On11 Time",
+  "companyName": "Qian He",
+  "versionLabel": "1.4",
+  "sdkVersion": "3",
+  "targetPlatforms": ["basalt"],
+  "capabilities": ["configurable"],
+  "watchapp": {
+    "watchface": true
+  },
+  "appKeys": {
+	"resetTime": 0,
+	"pedometerSensitivity": 1,
+	"stepGoal": 2,
+	"activeTimeGoal": 3
+  },
+  "resources": {
+    "media": [
+        {
+			"menuIcon": true,
+			"type": "png",
+			"name": "ICON",
+			"file": "icon.png"
+        }
+    ]
+  }
+}

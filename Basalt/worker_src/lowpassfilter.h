@@ -1,7 +1,7 @@
-#ifndef LOWPASSFILTER_H
-#define LOWPASSFILTER_H
+#ifndef _LOWPASSFILTER_H_
+#define _LOWPASSFILTER_H_
 
-#include <pebble.h>
+#include <pebble_worker.h>
 
 typedef struct {
 	double kAccelerometerMinStep;
@@ -11,6 +11,7 @@ typedef struct {
 	int16_t y;
 	int16_t z;
 } LowPassFilter;
+
 
 uint32_t wdSqrt(uint32_t n);
 uint32_t norm(int16_t x, int16_t y, int16_t z);

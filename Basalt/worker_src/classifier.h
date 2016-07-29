@@ -1,7 +1,7 @@
-#ifndef CLASSIFIER_H
-#define CLASSIFIER_H
+#ifndef _CLASSIFIER_H_
+#define _CLASSIFIER_H_
 
-#include <pebble.h>
+#include <pebble_worker.h>
 
 typedef struct {
 	double meanH;
@@ -9,6 +9,7 @@ typedef struct {
 	double deviationH;
 	double deviationV;
 } Feature;
+
 
 uint32_t classify(Feature feature);
 

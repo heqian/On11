@@ -4,8 +4,9 @@
 static uint32_t mDataSize = 0;
 static AccelData mAcceleration[SAMPLE_SIZE];
 
+
 // Handle accleration data
-uint32_t analyzeAcceleration(uint32_t* currentType, Counter* counter, LowPassFilter* filter, bool isDriving, int32_t sensitivity, AccelData* acceleration, uint32_t size) {
+uint32_t analyzeAcceleration(uint32_t* currentType, Counter* counter, LowPassFilter* filter, int32_t sensitivity, AccelData* acceleration, uint32_t size) {
 	// I don't know if Pebble's API will fail to return 0 sample. Just in case.
 	if (size == 0) {
 		APP_LOG(APP_LOG_LEVEL_INFO, "No acceleration sample!!");
@@ -72,12 +73,6 @@ uint32_t analyzeAcceleration(uint32_t* currentType, Counter* counter, LowPassFil
 		APP_LOG(APP_LOG_LEVEL_INFO, "%d %d %d %d: %d", (int) feature.meanV, (int) feature.meanH, (int) feature.deviationV, (int) feature.deviationH, (int) *currentType);
 
 		// Update
-		if (*currentType > 1 && isDriving) {
-			// If the user is driving, then, activity type is "sitting"
-			*currentType = 1;
-		}
-
-		// Update time
 		uint32_t timestamp = (uint32_t) time(NULL);
 		uint32_t elapsedTime = timestamp - counter->timestamp;
 
@@ -107,7 +102,7 @@ uint32_t analyzeAcceleration(uint32_t* currentType, Counter* counter, LowPassFil
 				ratio = (double) sensitivity / 100.0;
 			}
 
-			for (uint32_t i = 1; i < SAMPLE_SIZE; i++) {
+			for (uint32_t i = 0; i < SAMPLE_SIZE; i++) {
 				if (mAcceleration[i].x > feature.meanV + (maxV - feature.meanV) * ratio) {
 					if (direction == -1)
 						steps++;
@@ -118,7 +113,7 @@ uint32_t analyzeAcceleration(uint32_t* currentType, Counter* counter, LowPassFil
 					direction = -1;
 				}
 			}
-			steps /= 2;
+			steps /= 4;
 
 			if (*currentType == 2) {
 				if (steps > elapsedTime * MAX_WALKING_SPEED) {	// Driving may be recognized as walking. Fix it.
@@ -131,8 +126,15 @@ uint32_t analyzeAcceleration(uint32_t* currentType, Counter* counter, LowPassFil
 
 			counter->steps += steps;
 		}
-
-		mDataSize = 0;
+		
+		// Clean up for next round
+		// Sliding window: move the latter half to the front
+		for (uint32_t i = 0; i < SAMPLE_SIZE / 2; i++) {
+			mAcceleration[i].x = mAcceleration[SAMPLE_SIZE / 2 + i].x;
+			mAcceleration[i].y = mAcceleration[SAMPLE_SIZE / 2 + i].y;
+			mAcceleration[i].z = mAcceleration[SAMPLE_SIZE / 2 + i].z;
+		}
+		mDataSize = SAMPLE_SIZE / 2;
 		return 0;
 	}
 }

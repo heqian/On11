@@ -1,0 +1,57 @@
+{
+	"sdkVersion": "3",
+	"targetPlatforms": ["aplite", "basalt"],
+	"uuid": "",
+	"shortName": "On11",
+	"longName": "On11 for Pebble",
+	"companyName": "Qian He",
+	"versionLabel": "4.1",
+	"capabilities": ["configurable", "location"],
+	"watchapp": {
+		"watchface": true
+	},
+	"appKeys": {
+		"colorTheme": 0,
+		"resetTime": 1,
+		"speedThreshold": 2,
+		"requestSpeed": 3,
+		"speed": 4,
+		"batteryThreshold": 5,
+		"pedometerSensitivity": 6
+	},
+	"resources": {
+		"media": [
+	        {
+				"menuIcon": true,
+				"type": "png",
+				"name": "ICON",
+				"file": "images/icon.png"
+	        },
+			{
+				"type": "png",
+				"name": "CAR",
+				"file": "images/car.png"
+			},
+			{
+				"type": "png",
+				"name": "STEP",
+				"file": "images/step.png"
+			},
+			{
+				"type": "png",
+				"name": "SIT",
+				"file": "images/sit.png"
+			},
+			{
+				"type": "png",
+				"name": "WALK",
+				"file": "images/walk.png"
+			},
+			{
+				"type": "png",
+				"name": "JOG",
+				"file": "images/jog.png"
+			}
+		]
+	}
+}
