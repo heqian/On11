@@ -3,14 +3,14 @@ On11 watchface for Pebble Smartwatch, http://on11.mobi
 
 
 ## Aplite
-![On11](https://www.filepicker.io/api/file/V1ZuuaTQSomw2ktWjIqK/convert?h=160&w=360)
+![On11](https://assets.rebble.io/144x168/filters:upscale()/60Ry75gTRmRxmED9sMD6)
 
 1. Originally designed for Pebble Classic and Pebble Steel;
 2. "Black & White" mode for Pebble Classic and Pebble Steel;
 3. "Color" mode for Pebble Time and Pebble Time Steel.
 
 ## Basalt
-![On11 Time](https://www.filepicker.io/api/file/XGpKmXFNQa200e6C2vtS/convert?h=160&w=360)
+![On11 Time](https://assets.rebble.io/144x168/filters:upscale()/BSaaePgNTAK10HMj6JCx)
 
 1. Redesigned for Pebble models with color screen;
 2. Implemented a few graphics functions Pebble SDK did not provide.
